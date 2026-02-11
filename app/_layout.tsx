@@ -5,6 +5,7 @@ import { Stack } from "expo-router";
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
+  // TODO: add logic to check useAuth if user signed in
   return (
     // <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}></ThemeProvider>
     <ThemeProvider
@@ -16,7 +17,11 @@ export default function RootLayout() {
         },
       }}
     >
-      <Stack />
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="homeScreen" options={{ title: "Home" }} />
+        <Stack.Screen name="homeScreen" options={{ title: "Home" }} />
+      </Stack>
     </ThemeProvider>
   );
 }
