@@ -1,50 +1,56 @@
+import { ThemedButton } from "@/components/themed-button/themed-button";
+import { ThemedTextInput } from "@/components/themed-text-input/themed-text-input";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Button, Text, TextInput, View } from "react-native";
+import { Text, View } from "react-native";
 
 export default function SignUp() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const onCreateAccount = () => {
     // add logic to check is fields match expected values and create account in database
-    router.push("../index/Index");
+    //  set dialog to display as error if passwords do not match
+    if (password !== confirmPassword) {
+      // Display error dialog
+      return;
+    }
+
+    router.back();
   };
 
   const onSignIn = () => {
-    router.push("../index/Index");
+    router.back();
   };
 
   return (
     <View style={{ flex: 1, padding: 24, justifyContent: "center" }}>
-      <Text style={{ fontSize: 24, marginBottom: 16 }}>Sign in</Text>
-      <TextInput
-        placeholder="username"
+      <Text style={{ fontSize: 24, marginBottom: 16 }}>Sign up</Text>
+      <ThemedTextInput
+        placeholder="Username"
         autoCapitalize="none"
         value={username}
         onChangeText={setUsername}
-        style={{
-          borderWidth: 1,
-          padding: 12,
-          marginBottom: 12,
-          borderRadius: 8,
-        }}
       />
-      <TextInput
+      <ThemedTextInput
         placeholder="Password"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
-        style={{
-          borderWidth: 1,
-          padding: 12,
-          marginBottom: 16,
-          borderRadius: 8,
-        }}
       />
-      <Button title="Create Account" onPress={onCreateAccount} />
-      <Button title="Already have an account? Sign In" onPress={onSignIn} />
+      <ThemedTextInput
+        placeholder="Confirm Password"
+        secureTextEntry
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+      />
+      <ThemedButton title="Create Account" onPress={onCreateAccount} />
+      <ThemedButton
+        title="Already have an account? Sign In"
+        onPress={onSignIn}
+      />
     </View>
   );
 }

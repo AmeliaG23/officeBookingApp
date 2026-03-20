@@ -1,65 +1,66 @@
+import { ThemedButton } from "@/components/themed-button/themed-button";
+import { ThemedTextInput } from "@/components/themed-text-input/themed-text-input";
+import { Colors } from "@/constants/theme";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Button, Text, TextInput, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 export default function Index() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   const onLogin = () => {
-    router.push("../home-screen/HomeScreen");
+    // add logic to check username against username and password
+    // set dialog to display as error if username and password do not match
+    router.push("/(src)/home-screen/home-screen");
   };
 
   const onSignUp = () => {
-    router.push("../sign-up/SignUp");
+    router.push("/(src)/sign-up-screen/sign-up-screen");
   };
 
   return (
-    <View style={{ flex: 1, padding: 24, justifyContent: "center" }}>
-      <Text style={{ fontSize: 24, marginBottom: 16 }}>Sign in</Text>
-      <TextInput
-        placeholder="username"
+    <View style={styles.container}>
+      <Image
+        source={require("../../../assets/images/aviva.webp")}
+        style={styles.image}
+      />
+      <Text style={{ fontSize: 24, marginBottom: 10, color: Colors.blue.text }}>
+        Sign in
+      </Text>
+      <ThemedTextInput
+        placeholder="Username"
         autoCapitalize="none"
         value={username}
         onChangeText={setUsername}
-        style={{
-          borderWidth: 1,
-          padding: 12,
-          marginBottom: 12,
-          borderRadius: 8,
-        }}
       />
-      <TextInput
+      <ThemedTextInput
         placeholder="Password"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
-        style={{
-          borderWidth: 1,
-          padding: 12,
-          marginBottom: 16,
-          borderRadius: 8,
-        }}
       />
-      <TextInput
-        placeholder="Confirm Password"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        style={{
-          borderWidth: 1,
-          padding: 12,
-          marginBottom: 16,
-          borderRadius: 8,
-        }}
-      />
-      <Button title="Log in" onPress={onLogin} />
-      <Button
-        title="Don't already have an account? Sign Up"
-        onPress={onSignUp}
-      />
+      <View style={{ alignContent: "center" }}>
+        <ThemedButton title="Log in" onPress={onLogin} />
+        <Text style={{ marginBottom: 16, color: Colors.blue.text }}>
+          Do not have an account?
+        </Text>
+        <ThemedButton title="Sign Up" onPress={onSignUp} />
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+    justifyContent: "center",
+  },
+  image: {
+    width: 250,
+    height: 250,
+    alignSelf: "center",
+  },
+});
