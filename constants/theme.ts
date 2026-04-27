@@ -16,7 +16,7 @@ export const Colors = {
     text: "#11181C",
     background: "#fff",
     tint: tintColorLight,
-    icon: "#687076",
+    icon: "#8e9397",
     tabIconDefault: "#687076",
     tabIconSelected: tintColorLight,
   },
@@ -35,6 +35,7 @@ export const Colors = {
     icon: "#092c4b",
     tabIconDefault: "#092c4b",
     tabIconSelected: tintBlue,
+    card: "#c3d6e7",
   },
   yellow: {
     text: "#FCCA12",
@@ -51,6 +52,14 @@ export const Colors = {
     icon: "#59C247",
     tabIconDefault: "#59C247",
     tabIconSelected: tintGreen,
+  },
+  red: {
+    text: "#FF0000",
+    background: "#FFE6E6",
+    tint: "#FF0000",
+    icon: "#FF0000",
+    tabIconDefault: "#FF0000",
+    tabIconSelected: "#FF0000",
   },
 };
 
@@ -70,12 +79,5 @@ export const Fonts = Platform.select({
     serif: "serif",
     rounded: "normal",
     mono: "monospace",
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded:
-      "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
   },
 });

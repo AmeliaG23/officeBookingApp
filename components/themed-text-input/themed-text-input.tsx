@@ -10,6 +10,7 @@ export const ThemedTextInput = ({ ...props }) => {
         marginBottom: 16,
         borderRadius: 8,
         color: Colors.blue.text,
+        borderColor: Colors.blue.text,
       }}
       placeholderTextColor={Colors.blue.text}
       {...props}

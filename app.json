@@ -4,38 +4,54 @@
     "slug": "OfficeBookingApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/aviva-icon.svg",
+    "icon": "./assets/images/aviva.webp",
     "scheme": "officebookingapp",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIViewControllerBasedStatusBarAppearance": true
+      },
+      "bundleIdentifier": "com.anonymous.OfficeBookingApp"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#FCCA12",
-        "foregroundImage": "./assets/images/aviva-icon.svg",
-        "backgroundImage": "./assets/images/aviva-icon.svg"
+        "foregroundImage": "./assets/images/aviva.webp",
+        "backgroundImage": "./assets/images/aviva.webp"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.CAMERA"
+      ],
+      "package": "com.anonymous.OfficeBookingApp"
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/aviva-icon.svg"
+      "favicon": "./assets/images/aviva.webp"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/aviva-icon.svg",
+          "image": "./assets/images/aviva.webp",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#FCCA12",
           "dark": {
             "backgroundColor": "#FCCA12"
           }
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to scan QR codes for check-in.",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone to record audio when creating a booking.",
+          "recordAudioAndroid": false
         }
       ]
     ],

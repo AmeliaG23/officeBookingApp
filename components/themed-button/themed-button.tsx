@@ -3,6 +3,7 @@ import { Button, View } from "react-native";
 
 export const ThemedButton = ({
   title,
+  style,
   ...props
 }: {
   title: string;
@@ -21,6 +22,7 @@ export const ThemedButton = ({
         marginTop: 10,
         alignSelf: "center",
         alignContent: "center",
+        ...style,
       }}
     >
       <Button title={title} color={Colors.blue.text} {...props} />
