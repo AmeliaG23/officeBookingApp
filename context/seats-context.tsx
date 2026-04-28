@@ -12,9 +12,9 @@ const DATABASE_ID = "69ef5c350011864d4b73";
 const COLLECTION_ID = "seats";
 
 type SeatDocument = Models.Document & {
-  floorNumber?: number | string;
+  floorNumber?: number;
   teamArea?: string;
-  seatNumber?: number | string;
+  seatNumber?: number;
 };
 
 type SeatsContextValue = {

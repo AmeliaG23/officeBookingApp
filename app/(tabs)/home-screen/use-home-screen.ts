@@ -16,6 +16,7 @@ export function useHomeScreen() {
     useState(false);
   const [selectedSeatId, setSelectedSeatId] = useState("");
   const [selectedBookingId, setSelectedBookingId] = useState("");
+  const [seatNumber, setSeatNumber] = useState(0);
 
   const { seats } = useSeats();
   const { allBookings, deleteBooking, createBooking } = useBookings();
@@ -84,6 +85,7 @@ export function useHomeScreen() {
             isBookedByUser: isBookedByCurrentUser,
             name: bookingInfo?.name,
             seatId: seat.$id,
+            seatNumber: seat.seatNumber,
             bookingId: bookingInfo?.bookingId ?? "",
           };
         })
@@ -127,9 +129,11 @@ export function useHomeScreen() {
     bookingId: string,
     isBooked: boolean,
     isBookedByUser: boolean,
+    seatNumber: number,
   ) => {
     setSelectedSeatId(seatId);
     setSelectedBookingId(bookingId);
+    setSeatNumber(seatNumber);
     if (!isBooked) {
       setBookingModalVisible(true);
     } else if (isBookedByUser) {
@@ -163,24 +167,21 @@ export function useHomeScreen() {
   };
 
   return {
-    selectedDate,
     sortedSeats,
     floorOptions,
     teamOptions,
+    selectedDate,
     selectedFloor,
-    setSelectedFloor,
     selectedTeam,
-    setSelectedTeam,
     isBookingModalVisible,
-    setBookingModalVisible,
     isDeleteBookingModalVisible,
-    setDeleteBookingModalVisible,
+    seatNumber,
+    setSelectedFloor,
+    setSelectedTeam,
+    setBookingModalVisible,
     onDateSelected,
+    setDeleteBookingModalVisible,
     onDeleteBookingPressed,
-    selectedSeatId,
-    setSelectedSeatId,
-    selectedBookingId,
-    setSelectedBookingId,
     onSeatSelected,
     onBookSeatPressed,
   };

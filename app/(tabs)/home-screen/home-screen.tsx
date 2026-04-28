@@ -18,13 +18,14 @@ const HomeScreen = () => {
     teamOptions,
     selectedDate,
     selectedFloor,
-    setSelectedFloor,
     selectedTeam,
-    setSelectedTeam,
     isBookingModalVisible,
+    isDeleteBookingModalVisible,
+    seatNumber,
+    setSelectedFloor,
+    setSelectedTeam,
     setBookingModalVisible,
     onDateSelected,
-    isDeleteBookingModalVisible,
     setDeleteBookingModalVisible,
     onDeleteBookingPressed,
     onSeatSelected,
@@ -102,6 +103,7 @@ const HomeScreen = () => {
                   item.bookingId,
                   item.isBooked,
                   item.isBookedByUser,
+                  item.seatNumber ?? 0,
                 );
               }}
             >
@@ -137,11 +139,15 @@ const HomeScreen = () => {
           isVisible={isBookingModalVisible}
           onClosePressed={() => setBookingModalVisible(false)}
           onCreateBooking={onBookSeatPressed}
+          seatNumber={seatNumber}
+          date={selectedDate.toDateString()}
         />
         <DeleteBookingModal
           isVisible={isDeleteBookingModalVisible}
           onClosePressed={() => setDeleteBookingModalVisible(false)}
           onDeletePressed={onDeleteBookingPressed}
+          seatNumber={seatNumber}
+          date={selectedDate.toDateString()}
         />
       </View>
     </ThemedView>

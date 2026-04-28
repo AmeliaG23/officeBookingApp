@@ -48,7 +48,7 @@ export const Colors = {
   },
   green: {
     text: "#59C247",
-    background: "#E6F0FA",
+    background: "#87cd7a",
     tint: tintGreen,
     icon: "#59C247",
     tabIconDefault: "#59C247",

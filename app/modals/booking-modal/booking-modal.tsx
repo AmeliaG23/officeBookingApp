@@ -6,6 +6,8 @@ import { Colors } from "@/constants/theme";
 
 type BookingModalProps = {
   isVisible: boolean;
+  seatNumber: number;
+  date: string;
   onCreateBooking: () => void;
   onClosePressed: () => void;
 };
@@ -14,12 +16,17 @@ const BookingModal = ({
   isVisible,
   onCreateBooking,
   onClosePressed,
+  seatNumber,
+  date,
 }: BookingModalProps) => {
   return (
     <ThemedModal isVisible={isVisible}>
       <ThemedView>
         <ThemedText style={{ fontSize: 24, textAlign: "center" }}>
           Book Seat
+        </ThemedText>
+        <ThemedText style={{ textAlign: "center", marginVertical: 12 }}>
+          Are you sure you want to book seat {seatNumber} on {date}?
         </ThemedText>
         <ThemedButton
           title="Book Seat"
