@@ -1,20 +1,24 @@
 import { Colors } from "@/constants/theme";
 import SignedInOnly from "@/context/signed-in-only";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 
 export default function TabsLayout() {
+  const colorScheme = useColorScheme();
+  const theme = Colors.semantic[colorScheme ?? "light"];
+
   return (
     <SignedInOnly>
       <Tabs
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
-            backgroundColor: Colors.light.background,
+            backgroundColor: theme.surface,
             height: 70,
           },
-          tabBarActiveTintColor: Colors.blue.icon,
-          tabBarInactiveTintColor: Colors.light.icon,
+          tabBarActiveTintColor: theme.textPrimary,
+          tabBarInactiveTintColor: theme.textMuted,
         }}
       >
         <Tabs.Screen

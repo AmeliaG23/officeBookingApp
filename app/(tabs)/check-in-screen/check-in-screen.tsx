@@ -3,7 +3,13 @@ import { ThemedView } from "@/components/themed-view/themed-view";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Platform, StatusBar } from "react-native";
+import { Platform, StatusBar, StyleSheet } from "react-native";
+
+const styles = StyleSheet.create({
+  camera: {
+    flex: 1,
+  },
+});
 
 const CheckInScreen = () => {
   const [permission, requestPermission] = useCameraPermissions();
@@ -30,7 +36,7 @@ const CheckInScreen = () => {
       <ThemedView>
         {Platform.OS === "android" ? <StatusBar hidden /> : null}
         <CameraView
-          style={{ flex: 1 }}
+          style={styles.camera}
           facing="back"
           onBarcodeScanned={onBarCodeScanned}
         />

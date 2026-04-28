@@ -7,12 +7,78 @@ import { ThemedView } from "@/components/themed-view/themed-view";
 import { Colors } from "@/constants/theme";
 import currentDate from "@/utils/currentDate";
 import unavailableDates from "@/utils/unavailable-booking-days/unavailable-booking-days";
-import { Pressable, ScrollView, View } from "react-native";
+import { useMemo } from "react";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+  useColorScheme,
+} from "react-native";
 import CalendarStrip from "react-native-calendar-strip";
 import { useHomeScreen } from "./use-home-screen";
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+  },
+  calendar: {
+    height: 100,
+    marginTop: 4,
+    width: 400,
+  },
+  filtersRow: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+  content: {
+    flex: 1,
+    marginTop: 12,
+  },
+  seatCardBase: {
+    marginBottom: 12,
+    paddingBottom: 12,
+    borderWidth: 1,
+    borderLeftWidth: 6,
+    width: "90%",
+    alignSelf: "center",
+  },
+  seatTitle: {
+    fontWeight: "700",
+  },
+});
+
 const HomeScreen = () => {
+  const colorScheme = useColorScheme();
+  const theme = Colors.semantic[colorScheme ?? "light"];
+
+  const customDatesStyles = useMemo(
+    () => [
+      {
+        date: currentDate,
+        containerStyle: {
+          borderWidth: 2,
+          borderColor: theme.statusWarning,
+          borderRadius: 999,
+        },
+        dateNameStyle: {
+          color: theme.textPrimary,
+          fontWeight: "700",
+        },
+        dateNumberStyle: {
+          color: theme.textPrimary,
+          fontWeight: "700",
+          borderBottomWidth: 3,
+        },
+      },
+    ],
+    [theme.statusWarning, theme.textPrimary],
+  );
+
   const {
+    markedDates,
     sortedSeats,
     floorOptions,
     teamOptions,
@@ -33,44 +99,41 @@ const HomeScreen = () => {
   } = useHomeScreen();
 
   return (
-    <ThemedView style={{ flex: 1, paddingHorizontal: 16, paddingTop: 8 }}>
+    <ThemedView style={styles.container}>
       <View>
         <CalendarStrip
           scrollable
           useIsoWeekday
           numDaysInWeek={7}
           minDate={currentDate}
+          markedDates={markedDates}
+          customDatesStyles={customDatesStyles}
           selectedDate={selectedDate}
           onDateSelected={(date) => onDateSelected(date.toDate())}
-          // markedDates={markedDates}
-          calendarHeaderStyle={{ color: Colors.blue.text }}
-          dateNameStyle={{ color: Colors.blue.text }}
-          dateNumberStyle={{ color: Colors.blue.text }}
+          calendarHeaderStyle={{ color: theme.textPrimary }}
+          dateNameStyle={{ color: theme.textPrimary }}
+          dateNumberStyle={{ color: theme.textPrimary }}
           highlightDateNameStyle={{
-            color: Colors.blue.text,
+            color: theme.textPrimary,
             fontWeight: "700",
           }}
           highlightDateNumberStyle={{
-            color: Colors.blue.text,
+            color: theme.textPrimary,
             fontWeight: "700",
           }}
-          markedDatesStyle={{ backgroundColor: Colors.blue.text }}
+          markedDatesStyle={{ backgroundColor: theme.textPrimary }}
           daySelectionAnimation={{
             type: "background",
             duration: 100,
-            highlightColor: Colors.blue.card,
+            highlightColor: theme.surfaceAlt,
           }}
           datesBlacklist={unavailableDates}
           iconLeft={null}
-          disabledDateNameStyle={{ color: Colors.light.icon }}
-          disabledDateNumberStyle={{ color: Colors.light.icon }}
-          style={{
-            height: 100,
-            marginTop: 4,
-            width: 400,
-          }}
+          disabledDateNameStyle={{ color: theme.textMuted }}
+          disabledDateNumberStyle={{ color: theme.textMuted }}
+          style={styles.calendar}
         />
-        <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+        <View style={styles.filtersRow}>
           <ThemedDropdown
             data={floorOptions}
             icon="building"
@@ -87,16 +150,24 @@ const HomeScreen = () => {
           />
         </View>
       </View>
-      <View
-        style={{
-          flex: 1,
-          marginTop: 12,
-        }}
-      >
+      <View style={styles.content}>
         <ScrollView>
           {sortedSeats.map((item) => (
             <Pressable
               key={item.$id}
+              disabled={item.isBooked && !item.isBookedByCurrentUser}
+              accessibilityRole="button"
+              accessibilityLabel={`Seat ${item.seatNumber}, floor ${item.floorNumber}, ${item.teamArea}`}
+              accessibilityHint={
+                item.isBooked
+                  ? item.isBookedByCurrentUser
+                    ? "Open to delete your booking"
+                    : "Seat already booked"
+                  : "Open to create booking"
+              }
+              accessibilityState={{
+                disabled: item.isBooked && !item.isBookedByCurrentUser,
+              }}
               onPress={() => {
                 onSeatSelected(
                   item.seatId,
@@ -109,25 +180,22 @@ const HomeScreen = () => {
             >
               <ThemedCard
                 style={{
-                  marginBottom: 12,
-                  paddingBottom: 12,
-                  borderWidth: 1,
-                  backgroundColor: Colors.blue.lightCard,
-                  borderColor: Colors.blue.tint,
+                  ...styles.seatCardBase,
+                  backgroundColor: theme.surfaceAlt,
+                  borderColor: theme.border,
                   borderLeftColor: item.isBooked
-                    ? Colors.red.text
-                    : Colors.green.tint,
-                  borderLeftWidth: 6,
-                  width: "90%",
-                  alignSelf: "center",
+                    ? theme.statusDanger
+                    : theme.statusSuccess,
                 }}
               >
                 <ThemedText
-                  style={{ fontWeight: "700" }}
+                  style={[styles.seatTitle, { color: theme.textPrimary }]}
                 >{`Seat ${item.seatNumber}`}</ThemedText>
-                <ThemedText>{`Floor ${item.floorNumber} . ${item.teamArea}`}</ThemedText>
+                <ThemedText
+                  style={{ color: theme.textPrimary }}
+                >{`Floor ${item.floorNumber} . ${item.teamArea}`}</ThemedText>
                 {item.isBooked && (
-                  <ThemedText style={{ color: Colors.red.text }}>
+                  <ThemedText style={{ color: theme.statusDanger }}>
                     Booked by {item.isBookedByCurrentUser ? "you" : item.name}
                   </ThemedText>
                 )}

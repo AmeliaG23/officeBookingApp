@@ -10,10 +10,35 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Keyboard,
-  TouchableWithoutFeedback
+  StyleSheet,
+  TouchableWithoutFeedback,
+  useColorScheme,
 } from "react-native";
 
+const styles = StyleSheet.create({
+  card: {
+    borderWidth: 1,
+    borderRadius: 15,
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 16,
+    alignSelf: "center",
+  },
+  error: {
+    marginTop: 16,
+    alignSelf: "center",
+  },
+  footerText: {
+    marginBottom: 16,
+    marginTop: 16,
+    alignSelf: "center",
+  },
+});
+
 export default function SignUp() {
+  const colorScheme = useColorScheme();
+  const theme = Colors.semantic[colorScheme ?? "light"];
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -60,20 +85,12 @@ export default function SignUp() {
         <AvivaLogo />
         <ThemedCard
           style={{
-            borderColor: Colors.blue.text,
-            borderWidth: 1,
-            borderRadius: 15,
-            backgroundColor: Colors.blue.card,
+            ...styles.card,
+            borderColor: theme.border,
+            backgroundColor: theme.surfaceAlt,
           }}
         >
-          <ThemedText
-            style={{
-              fontSize: 24,
-              marginBottom: 16,
-              color: Colors.blue.text,
-              alignSelf: "center",
-            }}
-          >
+          <ThemedText style={[styles.title, { color: theme.textPrimary }]}>
             Sign up
           </ThemedText>
           <ThemedTextInput
@@ -101,13 +118,7 @@ export default function SignUp() {
             onChangeText={setConfirmPassword}
           />
           {error && (
-            <ThemedText
-              style={{
-                marginTop: 16,
-                color: Colors.red.text,
-                alignSelf: "center",
-              }}
-            >
+            <ThemedText style={[styles.error, { color: theme.statusDanger }]}>
               {error}
             </ThemedText>
           )}
@@ -116,14 +127,7 @@ export default function SignUp() {
             onPress={onCreateAccountPressed}
           />
         </ThemedCard>
-        <ThemedText
-          style={{
-            marginBottom: 16,
-            marginTop: 16,
-            color: Colors.blue.text,
-            alignSelf: "center",
-          }}
-        >
+        <ThemedText style={[styles.footerText, { color: theme.textPrimary }]}>
           Already have an account?
         </ThemedText>
         <ThemedButton title="Sign In" onPress={onSignInPressed} />

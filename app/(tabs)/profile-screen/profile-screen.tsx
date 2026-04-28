@@ -6,10 +6,35 @@ import { ThemedView } from "@/components/themed-view/themed-view";
 import { Colors } from "@/constants/theme";
 import { useUser } from "@/hooks/use-user/use-user";
 import { useState } from "react";
-import { View } from "react-native";
+import { StyleSheet, View, useColorScheme } from "react-native";
 import UpdatePasswordModal from "../../modals/update-password-modal/update-password-modal";
 
+const styles = StyleSheet.create({
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    alignSelf: "center",
+  },
+  card: {
+    marginBottom: 20,
+  },
+  row: {
+    flexDirection: "row",
+    gap: 6,
+  },
+  rowSpaced: {
+    flexDirection: "row",
+    gap: 6,
+    marginBottom: 12,
+  },
+  actions: {
+    gap: 10,
+  },
+});
+
 const ProfileScreen = () => {
+  const colorScheme = useColorScheme();
+  const theme = Colors.semantic[colorScheme ?? "light"];
   const [isResetPasswordModalVisible, setIsResetPasswordModalVisible] =
     useState(false);
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
@@ -28,34 +53,42 @@ const ProfileScreen = () => {
   return (
     <>
       <ThemedView>
-        <ThemedText
-          style={{ fontSize: 24, fontWeight: "bold", alignSelf: "center" }}
-        >
+        <ThemedText style={[styles.title, { color: theme.textPrimary }]}>
           Your Profile
         </ThemedText>
         <ThemedCard
-          style={{ backgroundColor: Colors.light.background, marginBottom: 20 }}
+          style={{
+            ...styles.card,
+            backgroundColor: theme.surfaceAlt,
+            borderColor: theme.border,
+            borderWidth: 1,
+            borderRadius: 12,
+          }}
         >
-          <View style={{ flexDirection: "row", gap: 6 }}>
-            <ThemedText>Name:</ThemedText>
-            <ThemedText>{user?.name}</ThemedText>
+          <View style={styles.row}>
+            <ThemedText style={{ color: theme.textPrimary }}>Name:</ThemedText>
+            <ThemedText style={{ color: theme.textPrimary }}>
+              {user?.name}
+            </ThemedText>
           </View>
-          <View style={{ flexDirection: "row", gap: 6, marginBottom: 12 }}>
-            <ThemedText>Email:</ThemedText>
-            <ThemedText>{user?.email}</ThemedText>
+          <View style={styles.rowSpaced}>
+            <ThemedText style={{ color: theme.textPrimary }}>Email:</ThemedText>
+            <ThemedText style={{ color: theme.textPrimary }}>
+              {user?.email}
+            </ThemedText>
           </View>
           <ThemedButton
             onPress={onUpdatePasswordPressed}
             title={"Update Password"}
           />
         </ThemedCard>
-        <View style={{ gap: 10 }}>
+        <View style={styles.actions}>
           <ThemedButton
             onPress={onLogOutPressed}
             title={"Logout"}
             style={{
-              backgroundColor: Colors.red.background,
-              borderColor: Colors.red.text,
+              backgroundColor: theme.statusDanger,
+              borderColor: theme.statusDanger,
             }}
           />
         </View>

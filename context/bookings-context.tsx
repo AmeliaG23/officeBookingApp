@@ -78,13 +78,19 @@ export function BookingsProvider({ children }: { children: any }) {
     }
   }, []);
 
-  const deleteBooking = useCallback(async (bookingId: string) => {
-    try {
-      await databases.deleteDocument(DATABASE_ID, COLLECTION_ID, bookingId);
-    } catch (error) {
-      console.log("Error deleting booking -", error);
-    }
-  }, []);
+  const deleteBooking = useCallback(
+    async (bookingId: string) => {
+      try {
+        await databases.deleteDocument(DATABASE_ID, COLLECTION_ID, bookingId);
+        if (user?.$id) {
+          await fetchBookingsbyUserID(user.$id);
+        }
+      } catch (error) {
+        console.log("Error deleting booking -", error);
+      }
+    },
+    [fetchBookingsbyUserID, user?.$id],
+  );
 
   const createBooking = useCallback(
     async (bookingData: BookingContextValue) => {
@@ -129,11 +135,22 @@ export function BookingsProvider({ children }: { children: any }) {
             ...prevAllBookings,
             bookingPayload,
           ]);
+          if (bookingPayload.userId === user.$id) {
+            setUserBookings((prevUserBookings) => [
+              ...prevUserBookings,
+              bookingPayload,
+            ]);
+          }
         }
 
         if (events[0].includes("delete")) {
           setAllBookings((prevAllBookings) =>
             prevAllBookings.filter(
+              (booking) => booking.$id !== bookingPayload.$id,
+            ),
+          );
+          setUserBookings((prevUserBookings) =>
+            prevUserBookings.filter(
               (booking) => booking.$id !== bookingPayload.$id,
             ),
           );

@@ -1,9 +1,12 @@
 import { Colors } from "@/constants/theme";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, useColorScheme } from "react-native";
 import ThemedModal from "../themed-modal/themed-modal";
 import { ThemedView } from "../themed-view/themed-view";
 
 export const LoadingSpinner = ({ isVisible }: { isVisible: boolean }) => {
+  const colorScheme = useColorScheme();
+  const theme = Colors.semantic[colorScheme ?? "light"];
+
   return (
     <ThemedModal isVisible={isVisible}>
       <ThemedView
@@ -12,7 +15,7 @@ export const LoadingSpinner = ({ isVisible }: { isVisible: boolean }) => {
         <ActivityIndicator
           style={{ marginTop: 20 }}
           size="large"
-          color={Colors.blue.text}
+          color={theme.textPrimary}
         />
       </ThemedView>
     </ThemedModal>

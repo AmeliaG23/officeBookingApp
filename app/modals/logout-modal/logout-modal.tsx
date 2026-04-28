@@ -3,8 +3,20 @@ import { ThemedText } from "@/components/themed-text/themed-text";
 import { Colors } from "@/constants/theme";
 import { useUser } from "@/hooks/use-user/use-user";
 import { useRouter } from "expo-router";
-import { View } from "react-native";
+import { StyleSheet, View, useColorScheme } from "react-native";
 import ThemedModal from "../../../components/themed-modal/themed-modal";
+
+const styles = StyleSheet.create({
+  title: {
+    fontSize: 20,
+    fontWeight: "700",
+    alignSelf: "center",
+  },
+  actions: {
+    marginTop: 16,
+    gap: 10,
+  },
+});
 
 type LogoutModalProps = {
   isVisible: boolean;
@@ -15,6 +27,8 @@ export default function LogoutModal({
   isVisible,
   setIsVisible,
 }: LogoutModalProps) {
+  const colorScheme = useColorScheme();
+  const theme = Colors.semantic[colorScheme ?? "light"];
   const router = useRouter();
   const { logout } = useUser();
 
@@ -29,19 +43,17 @@ export default function LogoutModal({
       isVisible={isVisible}
       onRequestClose={() => setIsVisible(false)}
     >
-      <ThemedText
-        style={{ fontSize: 20, fontWeight: "700", alignSelf: "center" }}
-      >
+      <ThemedText style={[styles.title, { color: theme.textPrimary }]}>
         Are you sure you want to log out?
       </ThemedText>
-      <View style={{ marginTop: 16, gap: 10 }}>
+      <View style={styles.actions}>
         <ThemedButton onPress={onLogOutPressed} title={"Log Out"} />
         <ThemedButton
           onPress={() => setIsVisible(false)}
           title={"Cancel"}
           style={{
-            backgroundColor: Colors.red.background,
-            borderColor: Colors.red.text,
+            backgroundColor: theme.statusDanger,
+            borderColor: theme.statusDanger,
           }}
         />
       </View>

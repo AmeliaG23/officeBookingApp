@@ -1,13 +1,16 @@
 import { Colors } from "@/constants/theme";
-import { Text, TextProps } from "react-native";
+import { Text, TextProps, useColorScheme } from "react-native";
 
 export const ThemedText = ({ style, ...props }: TextProps) => {
+  const colorScheme = useColorScheme();
+  const theme = Colors.semantic[colorScheme ?? "light"];
+
   return (
     <Text
       style={[
         {
           marginBottom: 20,
-          color: Colors.blue.text,
+          color: theme.textPrimary,
         },
         style,
       ]}

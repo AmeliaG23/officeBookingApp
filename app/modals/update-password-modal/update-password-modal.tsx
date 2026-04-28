@@ -3,8 +3,29 @@ import { ThemedTextInput } from "@/components/themed-text-input/themed-text-inpu
 import { ThemedText } from "@/components/themed-text/themed-text";
 import { Colors } from "@/constants/theme";
 import { useState } from "react";
-import { View } from "react-native";
+import {
+  AccessibilityInfo,
+  StyleSheet,
+  View,
+  useColorScheme,
+} from "react-native";
 import ThemedModal from "../../../components/themed-modal/themed-modal";
+
+const styles = StyleSheet.create({
+  title: {
+    fontSize: 20,
+    fontWeight: "700",
+    alignSelf: "center",
+  },
+  actions: {
+    marginTop: 16,
+    gap: 10,
+  },
+  error: {
+    marginTop: 16,
+    alignSelf: "center",
+  },
+});
 
 type UpdatePasswordModalProps = {
   isVisible: boolean;
@@ -15,6 +36,8 @@ export default function UpdatePasswordModal({
   isVisible,
   setIsVisible,
 }: UpdatePasswordModalProps) {
+  const colorScheme = useColorScheme();
+  const theme = Colors.semantic[colorScheme ?? "light"];
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -22,6 +45,7 @@ export default function UpdatePasswordModal({
     try {
       if (!email.trim()) {
         setError("Email is required");
+        AccessibilityInfo.announceForAccessibility("Email is required");
         console.log("Email is required");
         return;
       }
@@ -33,6 +57,9 @@ export default function UpdatePasswordModal({
     } catch (error) {
       console.log("Error sending password reset email -", error);
       setError("Failed to send password reset email. Please try again.");
+      AccessibilityInfo.announceForAccessibility(
+        "Failed to send password reset email. Please try again.",
+      );
     }
   };
 
@@ -41,14 +68,15 @@ export default function UpdatePasswordModal({
       isVisible={isVisible}
       onRequestClose={() => setIsVisible(false)}
     >
-      <ThemedText
-        style={{ fontSize: 20, fontWeight: "700", alignSelf: "center" }}
-      >
+      <ThemedText style={[styles.title, { color: theme.textPrimary }]}>
         Reset Password
       </ThemedText>
-      <ThemedText>Enter your email to reset your password</ThemedText>
+      <ThemedText style={{ color: theme.textPrimary }}>
+        Enter your email to reset your password
+      </ThemedText>
       <ThemedTextInput
         placeholder="Email"
+        accessibilityLabel="Email"
         autoCapitalize="none"
         keyboardType="email-address"
         value={email}
@@ -56,16 +84,14 @@ export default function UpdatePasswordModal({
       />
       {error && (
         <ThemedText
-          style={{
-            marginTop: 16,
-            color: Colors.red.text,
-            alignSelf: "center",
-          }}
+          accessibilityRole="alert"
+          aria-live="polite"
+          style={[styles.error, { color: theme.statusDanger }]}
         >
           {error}
         </ThemedText>
       )}
-      <View style={{ marginTop: 16, gap: 10 }}>
+      <View style={styles.actions}>
         <ThemedButton
           onPress={onSendResetLinkPressed}
           title={"Send Reset Link"}
@@ -74,8 +100,8 @@ export default function UpdatePasswordModal({
           onPress={() => setIsVisible(false)}
           title={"Cancel"}
           style={{
-            backgroundColor: Colors.red.background,
-            borderColor: Colors.red.text,
+            backgroundColor: theme.statusDanger,
+            borderColor: theme.statusDanger,
           }}
         />
       </View>

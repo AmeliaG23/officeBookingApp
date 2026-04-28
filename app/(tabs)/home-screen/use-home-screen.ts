@@ -2,7 +2,7 @@ import { useBookings } from "@/hooks/use-bookings/use-bookings";
 import { useSeats } from "@/hooks/use-seats/ use-seats";
 import { useUser } from "@/hooks/use-user/use-user";
 import currentDate from "@/utils/currentDate";
-import { toUTCDateTime } from "@/utils/unavailable-booking-days/toUTCDateTime";
+import { toUTCDateTime } from "@/utils/toUTCDateTime";
 import { useMemo, useState } from "react";
 
 export function useHomeScreen() {
@@ -19,7 +19,8 @@ export function useHomeScreen() {
   const [seatNumber, setSeatNumber] = useState(0);
 
   const { seats } = useSeats();
-  const { allBookings, deleteBooking, createBooking } = useBookings();
+  const { allBookings, deleteBooking, createBooking, userBookings } =
+    useBookings();
   const { user } = useUser();
 
   const onDateSelected = (date: Date) => {
@@ -30,6 +31,21 @@ export function useHomeScreen() {
     () => selectedDate.toISOString().split("T")[0],
     [selectedDate],
   );
+
+  const markedDates = useMemo(() => {
+    const uniqueBookedDateKeys = Array.from(
+      new Set(
+        userBookings
+          .map((booking) => String(booking.bookingDate).trim().slice(0, 10))
+          .filter(Boolean),
+      ),
+    );
+
+    return uniqueBookedDateKeys.map((dateKey) => ({
+      date: new Date(`${dateKey}T00:00:00.000Z`),
+      dots: [{ color: "#020701" }],
+    }));
+  }, [userBookings]);
 
   const bookingBySeatRef = useMemo(() => {
     const bookingsForSelectedDate = allBookings.filter(
@@ -167,6 +183,7 @@ export function useHomeScreen() {
   };
 
   return {
+    markedDates,
     sortedSeats,
     floorOptions,
     teamOptions,
