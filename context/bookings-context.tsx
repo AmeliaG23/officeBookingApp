@@ -12,12 +12,14 @@ import { ID, Models, Permission, Query, Role } from "react-native-appwrite";
 const DATABASE_ID = "69ef5c350011864d4b73";
 const COLLECTION_ID = "seat_bookings";
 
-type BookingDocument = Models.Document & {
+type BookingContextValue = {
   name: string;
-  seat: number;
+  seat: string;
   userId: string;
   bookingDate: string;
 };
+
+type BookingDocument = Models.Document & BookingContextValue;
 
 type BookingsContextValue = {
   allBookings: BookingDocument[];
@@ -26,7 +28,7 @@ type BookingsContextValue = {
   fetchBookingsbyUserID: (userId: string) => Promise<void>;
   fetchBookingById: (bookingId: string) => Promise<BookingDocument | undefined>;
   deleteBooking: (bookingId: string) => Promise<void>;
-  createBooking: (bookingData: any) => Promise<void>;
+  createBooking: (bookingData: BookingContextValue) => Promise<void>;
 };
 
 export const BookingsContext = createContext<BookingsContextValue | null>(null);
@@ -47,8 +49,6 @@ export function BookingsProvider({ children }: { children: any }) {
       console.log("Error fetching bookings -", error);
     }
   }, []);
-
-  console.log("All bookings in context -", allBookings);
 
   const fetchBookingsbyUserID = useCallback(async (userId: string) => {
     try {
@@ -87,7 +87,7 @@ export function BookingsProvider({ children }: { children: any }) {
   }, []);
 
   const createBooking = useCallback(
-    async (bookingData: any) => {
+    async (bookingData: BookingContextValue) => {
       try {
         if (!user?.$id) {
           console.log("User ID is required to create a booking");
@@ -97,7 +97,7 @@ export function BookingsProvider({ children }: { children: any }) {
           databaseId: DATABASE_ID,
           collectionId: COLLECTION_ID,
           documentId: ID.unique(),
-          data: { ...bookingData, userId: user.$id },
+          data: { ...bookingData },
           permissions: [
             Permission.read(Role.user(user.$id)),
             Permission.update(Role.user(user.$id)),

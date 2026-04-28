@@ -45,6 +45,7 @@ const ThemedDropdown = ({
         labelField="label"
         valueField="value"
         placeholder={placeholder}
+        itemTextStyle={{ color: Colors.blue.text }}
         value={value}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}

@@ -98,6 +98,7 @@ const HomeScreen = () => {
               key={item.$id}
               onPress={() => {
                 onSeatSelected(
+                  item.seatId,
                   item.bookingId,
                   item.isBooked,
                   item.isBookedByUser,
@@ -109,10 +110,11 @@ const HomeScreen = () => {
                   marginBottom: 12,
                   paddingBottom: 12,
                   borderWidth: 1,
+                  backgroundColor: Colors.blue.lightCard,
                   borderColor: Colors.blue.tint,
                   borderLeftColor: item.isBooked
                     ? Colors.red.text
-                    : Colors.yellow.tint,
+                    : Colors.green.tint,
                   borderLeftWidth: 6,
                   width: "90%",
                   alignSelf: "center",
@@ -121,10 +123,10 @@ const HomeScreen = () => {
                 <ThemedText
                   style={{ fontWeight: "700" }}
                 >{`Seat ${item.seatNumber}`}</ThemedText>
-                <ThemedText>{`Floor ${item.floorNumber} • ${item.teamArea}`}</ThemedText>
+                <ThemedText>{`Floor ${item.floorNumber} . ${item.teamArea}`}</ThemedText>
                 {item.isBooked && (
                   <ThemedText style={{ color: Colors.red.text }}>
-                    Booked by {item.name}
+                    Booked by {item.isBookedByCurrentUser ? "you" : item.name}
                   </ThemedText>
                 )}
               </ThemedCard>

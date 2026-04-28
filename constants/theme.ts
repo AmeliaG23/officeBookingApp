@@ -36,6 +36,7 @@ export const Colors = {
     tabIconDefault: "#092c4b",
     tabIconSelected: tintBlue,
     card: "#c3d6e7",
+    lightCard: "#f1f4f8",
   },
   yellow: {
     text: "#FCCA12",

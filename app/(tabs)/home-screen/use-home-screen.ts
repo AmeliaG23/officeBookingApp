@@ -14,10 +14,11 @@ export function useHomeScreen() {
   const [isBookingModalVisible, setBookingModalVisible] = useState(false);
   const [isDeleteBookingModalVisible, setDeleteBookingModalVisible] =
     useState(false);
+  const [selectedSeatId, setSelectedSeatId] = useState("");
   const [selectedBookingId, setSelectedBookingId] = useState("");
 
   const { seats } = useSeats();
-  const { allBookings, deleteBooking } = useBookings();
+  const { allBookings, deleteBooking, createBooking } = useBookings();
   const { user } = useUser();
 
   const onDateSelected = (date: Date) => {
@@ -82,6 +83,7 @@ export function useHomeScreen() {
             isBookedByCurrentUser,
             isBookedByUser: isBookedByCurrentUser,
             name: bookingInfo?.name,
+            seatId: seat.$id,
             bookingId: bookingInfo?.bookingId ?? "",
           };
         })
@@ -121,10 +123,12 @@ export function useHomeScreen() {
   );
 
   const onSeatSelected = (
+    seatId: string,
     bookingId: string,
     isBooked: boolean,
     isBookedByUser: boolean,
   ) => {
+    setSelectedSeatId(seatId);
     setSelectedBookingId(bookingId);
     if (!isBooked) {
       setBookingModalVisible(true);
@@ -133,8 +137,19 @@ export function useHomeScreen() {
     }
   };
 
-  const onBookSeatPressed = () => {
+  const onBookSeatPressed = async () => {
+    if (!selectedSeatId) {
+      return;
+    }
+
+    await createBooking({
+      seat: selectedSeatId,
+      bookingDate: selectedDate.toISOString(),
+      name: user?.name || "Unknown User",
+      userId: user?.$id || "unknown_user_id",
+    });
     setBookingModalVisible(false);
+    setSelectedSeatId("");
   };
 
   const onDeleteBookingPressed = async () => {
@@ -162,6 +177,8 @@ export function useHomeScreen() {
     setDeleteBookingModalVisible,
     onDateSelected,
     onDeleteBookingPressed,
+    selectedSeatId,
+    setSelectedSeatId,
     selectedBookingId,
     setSelectedBookingId,
     onSeatSelected,
