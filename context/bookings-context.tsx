@@ -1,22 +1,30 @@
 import { useUser } from "@/hooks/use-user/use-user";
-import { databases } from "@/lib/appwrite";
-import { createContext, useState } from "react";
-import { ID, Models, Permission, Role } from "react-native-appwrite";
+import { client, databases } from "@/lib/appwrite";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { ID, Models, Permission, Query, Role } from "react-native-appwrite";
 
-const DATABASE_ID = "69eb3d9d00273c779c85";
-const COLLECTION_ID = "bookings";
+const DATABASE_ID = "69ef5c350011864d4b73";
+const COLLECTION_ID = "seat_bookings";
 
 type BookingDocument = Models.Document & {
-  userId?: string;
-  bookingDate?: string;
-  date?: string;
+  name: string;
+  seat: number;
+  userId: string;
+  bookingDate: string;
 };
 
 type BookingsContextValue = {
-  bookings: BookingDocument[];
-  fetchBookings: () => Promise<void>;
-  fetchBookingById: (bookingId: string) => Promise<void>;
-  updateBooking: (bookingId: string, updatedData: any) => Promise<void>;
+  allBookings: BookingDocument[];
+  userBookings: BookingDocument[];
+  fetchAllBookings: () => Promise<void>;
+  fetchBookingsbyUserID: (userId: string) => Promise<void>;
+  fetchBookingById: (bookingId: string) => Promise<BookingDocument | undefined>;
   deleteBooking: (bookingId: string) => Promise<void>;
   createBooking: (bookingData: any) => Promise<void>;
 };
@@ -24,81 +32,155 @@ type BookingsContextValue = {
 export const BookingsContext = createContext<BookingsContextValue | null>(null);
 
 export function BookingsProvider({ children }: { children: any }) {
-  const [bookings, setBookings] = useState<BookingDocument[]>([]);
+  const [allBookings, setAllBookings] = useState<BookingDocument[]>([]);
+  const [userBookings, setUserBookings] = useState<BookingDocument[]>([]);
   const { user } = useUser();
 
-  async function fetchBookings() {
+  const fetchAllBookings = useCallback(async () => {
     try {
-      if (!user?.$id) {
-        setBookings([]);
-        return;
-      }
-
       const response = await databases.listDocuments<BookingDocument>({
         databaseId: DATABASE_ID,
         collectionId: COLLECTION_ID,
       });
-
-      setBookings(response.documents);
+      setAllBookings(response.documents);
     } catch (error) {
       console.log("Error fetching bookings -", error);
     }
-  }
+  }, []);
 
-  async function fetchBookingById(bookingId: string) {
+  console.log("All bookings in context -", allBookings);
+
+  const fetchBookingsbyUserID = useCallback(async (userId: string) => {
     try {
+      const response = await databases.listDocuments<BookingDocument>({
+        databaseId: DATABASE_ID,
+        collectionId: COLLECTION_ID,
+        queries: [Query.equal("userId", userId)],
+      });
+
+      setUserBookings(response.documents);
+    } catch (error) {
+      console.log("Error fetching bookings by user ID -", error);
+    }
+  }, []);
+
+  const fetchBookingById = useCallback(async (bookingId: string) => {
+    try {
+      const response = await databases.getDocument<BookingDocument>({
+        databaseId: DATABASE_ID,
+        collectionId: COLLECTION_ID,
+        documentId: bookingId,
+      });
+
+      return response;
     } catch (error) {
       console.log("Error fetching booking by ID -", error);
     }
-  }
+  }, []);
 
-  async function updateBooking(bookingId: string, updatedData: any) {
+  const deleteBooking = useCallback(async (bookingId: string) => {
     try {
-    } catch (error) {
-      console.log("Error updating booking -", error);
-    }
-  }
-
-  async function deleteBooking(bookingId: string) {
-    try {
+      await databases.deleteDocument(DATABASE_ID, COLLECTION_ID, bookingId);
     } catch (error) {
       console.log("Error deleting booking -", error);
     }
-  }
+  }, []);
 
-  async function createBooking(bookingData: any) {
-    try {
-      if (!user?.$id) {
-        console.log("User ID is required to create a booking");
-        return;
+  const createBooking = useCallback(
+    async (bookingData: any) => {
+      try {
+        if (!user?.$id) {
+          console.log("User ID is required to create a booking");
+          return;
+        }
+        await databases.createDocument({
+          databaseId: DATABASE_ID,
+          collectionId: COLLECTION_ID,
+          documentId: ID.unique(),
+          data: { ...bookingData, userId: user.$id },
+          permissions: [
+            Permission.read(Role.user(user.$id)),
+            Permission.update(Role.user(user.$id)),
+            Permission.delete(Role.user(user.$id)),
+          ],
+        });
+        await Promise.all([fetchBookingsbyUserID(user.$id)]);
+      } catch (error) {
+        console.log("Error creating booking -", error);
       }
-      await databases.createDocument({
-        databaseId: DATABASE_ID,
-        collectionId: COLLECTION_ID,
-        documentId: ID.unique(),
-        data: { ...bookingData, userId: user.$id },
-        permissions: [
-          Permission.read(Role.user(user.$id)),
-          Permission.update(Role.user(user.$id)),
-          Permission.delete(Role.user(user.$id)),
-        ],
+    },
+    [fetchBookingsbyUserID, user?.$id],
+  );
+
+  useEffect(() => {
+    let unsubscribe: () => void;
+    // subscribing to this channel as a listener
+    const channel = `databases.${DATABASE_ID}.collections.${COLLECTION_ID}.documents`;
+
+    if (user) {
+      fetchAllBookings();
+
+      unsubscribe = client.subscribe(channel, (response) => {
+        const { payload, events } = response;
+        const bookingPayload = payload as BookingDocument;
+
+        if (events[0].includes("create")) {
+          setAllBookings((prevAllBookings) => [
+            ...prevAllBookings,
+            bookingPayload,
+          ]);
+        }
+
+        if (events[0].includes("delete")) {
+          setAllBookings((prevAllBookings) =>
+            prevAllBookings.filter(
+              (booking) => booking.$id !== bookingPayload.$id,
+            ),
+          );
+        }
       });
-    } catch (error) {
-      console.log("Error creating booking -", error);
+    } else {
+      setAllBookings([]);
     }
-  }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [fetchAllBookings, user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchBookingsbyUserID(user.$id);
+    } else {
+      setUserBookings([]);
+    }
+  }, [fetchBookingsbyUserID, user]);
+
+  const value = useMemo(
+    () => ({
+      allBookings,
+      userBookings,
+      fetchAllBookings,
+      fetchBookingsbyUserID,
+      fetchBookingById,
+      deleteBooking,
+      createBooking,
+    }),
+    [
+      allBookings,
+      userBookings,
+      fetchAllBookings,
+      fetchBookingsbyUserID,
+      fetchBookingById,
+      deleteBooking,
+      createBooking,
+    ],
+  );
 
   return (
-    <BookingsContext.Provider
-      value={{
-        bookings,
-        fetchBookings,
-        fetchBookingById,
-        updateBooking,
-        deleteBooking,
-        createBooking,
-      }}
-    >
+    <BookingsContext.Provider value={value}>
       {children}
     </BookingsContext.Provider>
   );

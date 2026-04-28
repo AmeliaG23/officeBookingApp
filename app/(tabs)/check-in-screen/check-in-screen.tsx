@@ -44,5 +44,3 @@ const CheckInScreen = () => {
 };
 
 export default CheckInScreen;
-
-// https://www.youtube.com/watch?v=PZIEqcdFjpQ

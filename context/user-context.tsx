@@ -90,5 +90,3 @@ export function UserProvider({ children }: UserProviderProps) {
     </UserContext.Provider>
   );
 }
-
-// (https://www.youtube.com/watch?v=RcrWlOgL1hM)

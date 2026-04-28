@@ -1,5 +1,11 @@
 # Welcome to your Expo app 👋
 
+Refs:
+CalendarStrip docs: https://www.npmjs.com/package/react-native-scrollable-calendar-strip?activeTab=readme
+Check In Screen: https://www.youtube.com/watch?v=PZIEqcdFjpQ
+Loading: https://reactnative.dev/docs/activityindicator
+User-Context: https://www.youtube.com/watch?v=RcrWlOgL1hM
+
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 ## Get started

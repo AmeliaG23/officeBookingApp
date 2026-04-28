@@ -1,19 +1,25 @@
 import { databases } from "@/lib/appwrite";
-import { createContext, useState } from "react";
+import {
+    createContext,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import { Models } from "react-native-appwrite";
 
-const DATABASE_ID = "69eb3d9d00273c779c85";
+const DATABASE_ID = "69ef5c350011864d4b73";
 const COLLECTION_ID = "seats";
+
+type SeatDocument = Models.Document & {
+  floorNumber?: number | string;
+  teamArea?: string;
+  seatNumber?: number | string;
+};
 
 type SeatsContextValue = {
   seats: SeatDocument[];
   fetchSeats: () => Promise<void>;
-};
-
-type SeatDocument = Models.Document & {
-  floor_number?: number | string;
-  team_area?: string;
-  seat_number?: number | string;
 };
 
 export const SeatsContext = createContext<SeatsContextValue | null>(null);
@@ -21,27 +27,25 @@ export const SeatsContext = createContext<SeatsContextValue | null>(null);
 export function SeatsProvider({ children }: { children: any }) {
   const [seats, setSeats] = useState<SeatDocument[]>([]);
 
-  async function fetchSeats() {
+  const fetchSeats = useCallback(async () => {
     try {
       const response = await databases.listDocuments<SeatDocument>({
         databaseId: DATABASE_ID,
         collectionId: COLLECTION_ID,
       });
-
       setSeats(response.documents);
     } catch (error) {
       console.log("Error fetching seats -", error);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    fetchSeats();
+  }, [fetchSeats]);
+
+  const value = useMemo(() => ({ seats, fetchSeats }), [seats, fetchSeats]);
 
   return (
-    <SeatsContext.Provider
-      value={{
-        seats,
-        fetchSeats,
-      }}
-    >
-      {children}
-    </SeatsContext.Provider>
+    <SeatsContext.Provider value={value}>{children}</SeatsContext.Provider>
   );
 }

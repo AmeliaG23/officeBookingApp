@@ -18,5 +18,3 @@ export const LoadingSpinner = ({ isVisible }: { isVisible: boolean }) => {
     </ThemedModal>
   );
 };
-
-// https://reactnative.dev/docs/activityindicator
