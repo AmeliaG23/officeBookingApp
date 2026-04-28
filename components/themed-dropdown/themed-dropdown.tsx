@@ -23,8 +23,6 @@ const ThemedDropdown = ({
   const colorScheme = useColorScheme();
   const theme = Colors.semantic[colorScheme ?? "light"];
 
-  //   const value = externalValue !== undefined ? externalValue : localValue;
-
   return (
     <View
       accessible

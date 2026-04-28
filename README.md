@@ -5,6 +5,10 @@ CalendarStrip docs: https://www.npmjs.com/package/react-native-scrollable-calend
 Check In Screen: https://www.youtube.com/watch?v=PZIEqcdFjpQ
 Loading: https://reactnative.dev/docs/activityindicator
 User-Context: https://www.youtube.com/watch?v=RcrWlOgL1hM
+dropdown: https://www.npmjs.com/package/react-native-element-dropdown
+Icons: https://icons.expo.fyi/Index
+Booking: https://www.youtube.com/watch?v=l9zh0pqEHyc + https://www.youtube.com/watch?v=dGRd0L3EAfc
+Filter: https://medium.com/@didemsahin1789/build-powerful-search-filter-sort-implementation-in-react-native-ad1156e2ccd4
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 

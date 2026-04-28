@@ -10,6 +10,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: "center",
     marginTop: 12,
+    padding: 12,
   },
   message: {
     textAlign: "center",
