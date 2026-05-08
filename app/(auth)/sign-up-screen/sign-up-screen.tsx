@@ -112,7 +112,7 @@ export default function SignUp() {
             onChangeText={setPassword}
           />
           <ThemedTextInput
-            placeholder="Confirm Password"
+            placeholder="Confirm password"
             secureTextEntry
             value={confirmPassword}
             onChangeText={setConfirmPassword}

@@ -64,7 +64,7 @@ export const Colors = {
   // },
   semantic: {
     light: {
-      surface: "#FFFFFF",
+      surface: "#E6F0FA",
       surfaceAlt: "#F1F4F8",
       border: "#C3D6E7",
       textPrimary: "#092C4B",

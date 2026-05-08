@@ -128,12 +128,12 @@ export default function Index() {
                 {error}
               </ThemedText>
             )}
-            <ThemedButton title="Log in" onPress={onLoginPressed} />
+            <ThemedButton title="Sign in" onPress={onLoginPressed} />
           </ThemedCard>
           <ThemedText style={[styles.footerText, { color: theme.textPrimary }]}>
             No account?
           </ThemedText>
-          <ThemedButton title="Sign Up" onPress={onSignUpPressed} />
+          <ThemedButton title="Sign up" onPress={onSignUpPressed} />
         </ThemedView>
       </TouchableWithoutFeedback>
     </>
